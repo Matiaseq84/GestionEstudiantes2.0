@@ -1,5 +1,6 @@
 const Student = require('../models/Student')
 const UserController = require('../controllers/UserController')
+const SubjectController = require('../controllers/SubjectController')
 
 
 exports.addStudent = async function(req,res) {
@@ -22,7 +23,6 @@ exports.addStudent = async function(req,res) {
             },
         });
 
-
         const savedStudent = await newStudent.save()
 
         const userResult = await UserController.addUser(dni)
@@ -42,11 +42,63 @@ exports.addStudent = async function(req,res) {
 
 exports.findStudentByDni = async function (req, res) {
     try {
-        const student = await Alumno.findById(req.params.dni)
-        if(!student) return res.status(404).json({success: false, message: 'Alumno no encontrado'})
-        console.log(student)
-        res.status(200).json({success: true, data: student})
+        const {dni} = req.query
+        
+        const student = await Student.findOne({dni})
+        
+        if(!student) return res.send(`<p> Alumno no encontrado`)
+        
+        const subjects = await SubjectController.getSubjects()
+
+        const enrolledSubjects = student.subjects.map(subject => subject.subjectName)
+
+        const unenrolledSubjects = subjects.filter(subject => !enrolledSubjects.includes(subject))
+
+        res.send(`
+            <p> Nombre: ${student.name}</p>
+            <p> Apellido: ${student.lastname} </p>
+            <p> DNI: ${student.dni} </p>
+            <ul>
+                ${unenrolledSubjects
+                    .map(subjectName => 
+                        `
+                        <li>
+                            <span>${subjectName}
+                            <input type="checkbox" name= "selectedSubjects[]" value=${subjectName}>
+                        </li>`
+                    )
+                    .join('')}
+            `)
+
+        //res.status(200).json({success: true, data: student})
     } catch(err) {
         res.status(500).json({success: false, message: 'Error al obtener el alumno'})
     }
+}
+
+exports.enrolSubjects = async function(req,res) {
+    try {
+        const { dni, selectedSubjects } = req.body
+
+        console.log(req.body)
+
+        if(!selectedSubjects || selectedSubjects.length === 0) return res.status(400).render('panel-administrador', {warning: 'Debe seleccionar al menos una materia'})
+
+        const student = await Student.findOne({dni})                
+
+        if(!student) return res.status(404).render('panel-administrador', 'Alumno no encontrado')
+    
+        selectedSubjects.forEach(subjectName => {
+            student.subjects.push({subjectName, score: 0})
+            
+        })
+
+        await student.save()
+
+        res.status(200).render('panel-administrador', {success: 'Alumno inscripto'})
+    } catch(err) {
+        console.error('Error al registrar materias', err)
+        res.status(500).render('panel-administrador', {error: 'Error al registrar'})
+    }
+    
 }

@@ -10,7 +10,13 @@ const StudentSchema = new mongoose.Schema({
         parentName:  {type: String, required: true},
         parentDni: {type: String, required: true}
 
-    }
+    },
+    subjects: [
+        {
+            subjectName: {type: String, unique: true},
+            score: {type: Number, min: 0, max: 10}
+        }
+    ]
 })
 
 const Student = mongoose.model('Student', StudentSchema)

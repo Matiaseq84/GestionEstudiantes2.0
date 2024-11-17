@@ -3,10 +3,13 @@ const app = express()
 const path = require('path')
 const PORT = process.env.PORT || 3000
 const connectDB = require('./db.js')
-const Users = require('./utils/initializeUsers')
+const Users = require('./controllers/UserController.js')
+const Subjects = require('./controllers/SubjectController.js')
+
 
 connectDB().then(async () => {
   await Users.initializeUser()
+  await Subjects.initializeSubjects()
 })
 
 app.set('view engine', 'pug')

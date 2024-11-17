@@ -53,9 +53,7 @@ html
                 button(type="button" id="buscarAlumnoBtn") BUSCAR
 
                 div(id="resultadoBusqueda")
-                            
-                    
-                
+                                            
                 button(type="submit", id="btnInscribir") Inscribir Alumno
                 br    
                 if(warning)
@@ -91,8 +89,8 @@ script.
                      
                     
                 },
-                error: function() {
-                    alert('Error al realizar la búsqueda')
+                error: function(response) {
+                    $('#resultadoBusqueda').html(response)
                 }
             })
         })

@@ -3,7 +3,6 @@ const router = express.Router()
 const path = require('path')
 const fs = require('fs').promises
 const Student = require('../models/Student')
-const {generarContrasenaAleatoria} = require('../utils/funciones')
 const Students = require('../controllers/StudentController')
 
 router.get('/panel-administrador', (req, res) => {
@@ -11,46 +10,10 @@ router.get('/panel-administrador', (req, res) => {
 })
 
 
-router.post('/registrar-estudiante', Students.addStudent) /*=> {
+router.post('/registrar-estudiante', Students.addStudent) 
     
-        
-        //Crear la relación entre alumnos y materias
-        const filePathAlumnoMateria = path.join(__dirname, '../jsons/alumnos-materias.json')
-        const dataAlumnoMateria = await fs.readFile(filePathAlumnoMateria, 'utf-8')
-        const alumnosMaterias = JSON.parse(dataAlumnoMateria)
 
-        const alumnoMateria = {
-            dni,
-            materias: []
-        }
-
-        //Leer las materias y agregarlas al alumno
-        const filePathMaterias = path.join(__dirname, '../jsons/materias.json');
-        const materiasData = await fs.readFile(filePathMaterias, 'utf-8');
-        const materiasDisponibles = JSON.parse(materiasData);
-
-
-        materiasDisponibles.forEach(mat => {
-            const materiaNota = {
-                nombreMateria: mat.nombreMateria,
-                nota: 0,
-                inscripto: false
-            };
-            alumnoMateria.materias.push(materiaNota);
-        });
-
-        alumnosMaterias.push(alumnoMateria)
-        await fs.writeFile(filePathAlumnoMateria, JSON.stringify(alumnosMaterias, null, 2))
-
-        //res.status(201).render('panel-administrador', {success: 'Alumno y usuario creado. Contraseña: ' + passwordGenerado})
-        res.status(201).send('Alumno y usuario creado. Contraseña: ' + passwordGenerado)
-    } catch(error) {
-        console.error('Error:', error)
-        res.status(500).send('Error en el servidor')
-    }
-})*/
-
-router.get('/buscar-alumno', async (req,res) => {
+router.get('/buscar-alumno', Students.findStudentByDni) /* => {
         
         const {dni} = req.query
         const filePath = path.join(__dirname, '../jsons/alumnos.json')
@@ -106,12 +69,12 @@ async function buscarAlumnoMaterias(dni) {
         console.error('Error', error)
         res.status(500).send('Error en el Servidor')
     }
-}
+}*/
 
-router.post('/inscripcion-materias', async (req, res) => {
-    const { dni, inscripcionMaterias } = req.body
+router.post('/inscripcion-materias', Students.enrolSubjects) /*=> {
+    const { dni, registerSubjects } = req.body
 
-    if(!inscripcionMaterias || inscripcionMaterias.length === 0) return res.status(400).render('panel-administrador', {warning: 'Debe seleccionar al menos una materia'})
+    if(!registerSubjects || registerSubjects.length === 0) return res.status(400).render('panel-administrador', {warning: 'Debe seleccionar al menos una materia'})
     
     const filePath = path.join(__dirname, '../jsons/alumnos-materias.json')
     try {
@@ -139,6 +102,6 @@ router.post('/inscripcion-materias', async (req, res) => {
         res.status(500).send('Error en el servidor')
     }
     
-})
+})*/
 
 module.exports = router
