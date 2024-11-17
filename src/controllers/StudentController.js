@@ -1,4 +1,5 @@
 const Student = require('../models/Student')
+const UserController = require('../controllers/UserController')
 
 
 exports.addStudent = async function(req,res) {
@@ -6,8 +7,8 @@ exports.addStudent = async function(req,res) {
         
         const { name, lastname, dni, bornDate, email, parentName, parentDni} = req.body
         
-        const existe = await Student.findOne({ dni })
-        if(existe) return res.status(409).render('panel-administrador', {warning: 'Alumno existente'})
+        const exists = await Student.findOne({ dni })
+        if(exists) return res.status(409).render('panel-administrador', {warning: 'Alumno existente'})
         
         const newStudent = new Student({
             name,
@@ -21,10 +22,18 @@ exports.addStudent = async function(req,res) {
             },
         });
 
-        console.log(newStudent)
 
         const savedStudent = await newStudent.save()
-        res.status(201).render('panel-administrador', {success: 'Alumno registrado exitosamente', data: savedStudent})
+
+        const userResult = await UserController.addUser(dni)
+
+        if(!userResult.success) {
+            await Student.findByIdAndDelete(savedStudent._id)
+            return res.status(500).render('panel-administrador', {error: 'Error al crear el usuario asociado: ' + userResult.message})
+        }
+
+        res.status(201).render('panel-administrador', {success: `Alumno registrado exitosamente. Usuario creado con contraseña: ${userResult.password}`, data: savedStudent})
+
     } catch (err) {
         console.error('Error al guardar el estudiante: ', err)
         res.status(500).render('panel-administrador', {error: 'Error al registrar el Alumno'})

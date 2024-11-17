@@ -14,23 +14,6 @@ router.get('/panel-administrador', (req, res) => {
 router.post('/registrar-estudiante', Students.addStudent) /*=> {
     
         
-        //Crear usuario en user.json
-        const filePathUser = path.join(__dirname, '../jsons/users.json')
-        const dataUser = await fs.readFile(filePathUser, 'utf-8')
-        const users = JSON.parse(dataUser)
-
-        passwordGenerado = generarContrasenaAleatoria()
-
-        const nuevoUser = {
-            [dni]: {
-                password: passwordGenerado,
-                role: 'alumno'
-            } 
-        }
-
-        users.push(nuevoUser)
-        await fs.writeFile(filePathUser, JSON.stringify(users, null, 2))
-
         //Crear la relación entre alumnos y materias
         const filePathAlumnoMateria = path.join(__dirname, '../jsons/alumnos-materias.json')
         const dataAlumnoMateria = await fs.readFile(filePathAlumnoMateria, 'utf-8')
