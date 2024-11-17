@@ -1,0 +1,103 @@
+doctype html
+html
+    head
+        title Panel Administrativo
+        //link(rel='stylesheet', href='/styles.css') 
+        script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+    body
+        h1 Panel Administrativo
+
+        // Botones para cambiar entre formularios
+        button(onclick="mostrarForm('registro')" style="margin: 20px") Registro de Estudiantes
+        button(onclick="mostrarForm('inscripcion')") Inscripción de Materias
+
+        // Contenedor de formularios
+        div#formularios
+            // Formulario de registro de estudiantes
+            form#formRegistroEstudiantes(method="POST", action="/admin/registrar-estudiante" style="display: none;")
+                label(for='name') Nombre: 
+                input(type="text" name="name" required)
+                br
+                label(for="lastname") Apellido: 
+                input(type="text" name="lastname" required)
+                br
+                label(for="dni") DNI:
+                input(type="number" name="dni" required)
+                br
+                label(for="bornDate") Fecha de nacimiento:
+                input(type="date" name="bornDate" required)
+                br
+                label(for="email") Email:
+                input(type="email" name="email" required)
+                br
+                label(for="parentName") Nombre del padre o tutor:
+                input(type="text" name="parentName" required)
+                br
+                label(for="parentDni") DNI del padre o tutor:
+                input(type="number" name="parentDni" required)
+                br
+                button(type="submit") Registrar Alumno
+                br
+                if(success) 
+                    p(style= "color:green") #{success}
+                if(warning)
+                    p(style="color:orange") #{warning}
+
+            // Formulario de inscripción de materias
+            
+            form#formInscripcionMaterias(method="POST", action="/admin/inscripcion-materias" style="display: none;")
+                h2 Inscripción de Materias             
+
+                label(for="dni") Buscar estudiante por DNI:
+                input(type="text" id="dni" name="dni" placerholder= "Ingrese el DNI")
+                button(type="button" id="buscarAlumnoBtn") BUSCAR
+
+                div(id="resultadoBusqueda")
+                            
+                    
+                
+                button(type="submit", id="btnInscribir") Inscribir Alumno
+                br    
+                if(warning)
+                    p(style="color:orange") #{warning}
+                if(success)
+                    p(style="color:green") #{success}
+                
+
+script.
+    function mostrarForm(form) {
+        // Ocultar ambos formularios
+        document.getElementById('formRegistroEstudiantes').style.display = 'none';
+        document.getElementById('formInscripcionMaterias').style.display = 'none';
+ 
+        // Mostrar el formulario correspondiente
+        if (form === 'registro') {
+            document.getElementById('formRegistroEstudiantes').style.display = 'block';
+        } else if (form === 'inscripcion') {
+                document.getElementById('formInscripcionMaterias').style.display = 'block';
+            }
+    }
+
+
+    $(document).ready(function() {
+        $('#buscarAlumnoBtn').click(function() {
+            const dni = $('#dni').val()
+            $.ajax({
+                url: '/admin/buscar-alumno',
+                method: 'GET',
+                data: {dni: dni},
+                success: function(response) {
+                    $('#resultadoBusqueda').html(response)
+                     
+                    
+                },
+                error: function() {
+                    alert('Error al realizar la búsqueda')
+                }
+            })
+        })
+                
+    })
+
+           
+

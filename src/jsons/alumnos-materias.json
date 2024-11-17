@@ -1,0 +1,27 @@
+[
+  {
+    "dni": "22222",
+    "materias": [
+      {
+        "nombreMateria": "Matemáticas",
+        "nota": 0,
+        "inscripto": false
+      },
+      {
+        "nombreMateria": "Historia",
+        "nota": 0,
+        "inscripto": false
+      },
+      {
+        "nombreMateria": "Lengua",
+        "nota": 0,
+        "inscripto": false
+      },
+      {
+        "nombreMateria": "Geografía",
+        "nota": 0,
+        "inscripto": false
+      }
+    ]
+  }
+]

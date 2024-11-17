@@ -1,0 +1,17 @@
+doctype html 
+html 
+    head 
+        title INICIAR SESION
+    body
+        h1 Iniciar Sesión 
+        form(action="/login" method= "POST")    
+            label(for="username") Usuario:
+            input(type="text" name="username" required)
+            br
+            label(for="password") Contraseña:
+            input(type="password" name="password" required)
+            br
+            button(type="submit") Iniciar Sesión
+            br
+            if error 
+                p(style= "color:red") #{error}

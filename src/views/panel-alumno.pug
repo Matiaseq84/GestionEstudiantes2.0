@@ -1,0 +1,29 @@
+doctype html
+html 
+    head   
+        title PANEL ALUMNO
+    body
+        h1 Bienvenido, #{alumno.nombre}!!
+
+        h2 Datos personales
+
+        p NOMBRE: #{alumno.apellido}, #{alumno.nombre}
+        p DNI: #{alumno.dni}
+        p FECHA DE NACIMIENTO: #{alumno.fechaNacimiento}
+        p EMAIL: #{alumno.email}
+        p NOMBRE DEL PADRE: #{alumno.padres.nombrePadre}
+        p DNI DEL PADRE: #{alumno.padres.dni}
+
+        h2 Materias inscriptas
+
+        if materias.length > 0
+            ul 
+                each materia in materias
+                    li(style="margin-bottom: 1.2rem") 
+                        span #{materia.nombreMateria}
+                        if materia.inscripto
+                            span(style="color: green") - Inscripto
+                        else 
+                            span(style="color: red") - No inscripto
+                        br
+                        span(style= "font-weight: bold") Nota: #{materia.nota === 0 ? 'SIN NOTA' : materia.nota}

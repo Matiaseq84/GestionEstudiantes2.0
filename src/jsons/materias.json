@@ -1,0 +1,18 @@
+[
+    {
+        "idMateria": 1,
+        "nombreMateria": "Matemáticas"
+    },
+    {
+        "idMateria": 2,
+        "nombreMateria": "Historia"
+    },
+    {
+        "idMateria": 3,
+        "nombreMateria": "Lengua"
+    },
+    {
+        "idMateria": 4,
+        "nombreMateria": "Geografía"
+    }
+]

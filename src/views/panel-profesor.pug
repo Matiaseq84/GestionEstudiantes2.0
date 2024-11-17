@@ -1,0 +1,37 @@
+doctype html 
+html 
+    head   
+        title Panel Profesor
+        script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+    body 
+        h1 Bienvenido!
+
+        form(method="POST", action="/profesor/registrar-notas")
+            label(for="dni") Buscar estudiante por DNI:
+            input(type="text" id="dni" name="dni" placerholder="Ingrese DNI" )
+            button(type="button" id="buscarAlumnoBtn") BUSCAR
+
+            div(id="resultadoBusqueda")
+                 
+                   
+
+            button(type="submit") Inscribir materias
+
+script.
+    $(document).ready(function() {
+        $('#buscarAlumnoBtn').click(function() {
+            const dni = $('#dni').val()
+            $.ajax({
+                url: '/profesor/buscar-alumno',
+                method: 'GET',
+                data: {dni: dni},
+                success: function(response) {
+                    $('#resultadoBusqueda').html(response)
+                },
+                error: function() {
+                    alert('Error al realizar la búsqueda')
+                }
+            })
+        })
+
+    })
