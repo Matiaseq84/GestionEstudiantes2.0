@@ -47,3 +47,25 @@ exports.initializeUser = async function() {
         console.error('Error inicializando usuarios: ', err)
     }
 }
+
+exports.validateLogin = async function(req,res) {
+    try {
+        const {username, password} = req.body
+
+        const user = await User.findOne({username})
+
+        if(!user) res.status(401).render('login', {error: 'Usuario o contraseña incorrecta'})
+
+        if(user.username === username && user.password === password) {
+            if(user.role === 'admin') res.status(200).redirect('admin/panel-administrador')
+            if(user.role === 'profesor') res.status(200).redirect('profesor/panel-profesor')
+            if(user.role === 'student') res.status(200).redirect(`alumno/panel-alumno/${user.username}`)
+            
+        }
+    } catch (err) {
+        console.error('Error al loguearse', err)
+        res.status(500).render('login', { error: 'Error en el servidor'})
+    }
+
+    
+}

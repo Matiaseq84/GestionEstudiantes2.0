@@ -2,13 +2,14 @@ const express = require('express')
 const router = express.Router()
 const path = require('path')
 const fs = require('fs').promises
+const Users = require('../controllers/UserController')
 
 
 router.get("/", (req, res) => {
     res.render('login')
 })
 
-router.post("/", async (req, res) => {
+router.post("/", Users.validateLogin)  /*async (req, res) => {
     const {username, password} = req.body
     const filePath = path.join(__dirname, '../jsons/users.json')
 
@@ -37,6 +38,6 @@ router.post("/", async (req, res) => {
     
     
     
-} )
+} )*/
 
 module.exports = router

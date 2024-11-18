@@ -54,11 +54,49 @@ exports.findStudentByDni = async function (req, res) {
             const subjects = await SubjectController.getSubjects(); // Asegúrate de que getSubjects devuelva un array de strings
 
             const enrolledSubjects = student.subjects.map(subject => subject.subjectName);
+            const enrolledSubjectsWithScore = student.subjects.map(subject => ({
+                name: subject.subjectName,
+                score: subject.score
+            }))
             
             const unenrolledSubjects = subjects.filter(subject => !enrolledSubjects.includes(subject));
             
-            // Renderiza la respuesta correctamente
+            const isAdminView = req.originalUrl.includes('/admin')
+
+            const subjectsToShow = isAdminView ? unenrolledSubjects : enrolledSubjectsWithScore
+
+            console.log(subjectsToShow)
+
+            const inputsHtml = subjectsToShow
+                .map(subject => {
+                    if(isAdminView) {
+                        return `
+                            <li>
+                                <span>${subject}</span>
+                                <input type="checkbox" name="selectedSubjects[]" value=${subject}
+                            </li>
+                        `    
+                    } else {
+                        return `
+                            <li>
+                                <span>${subject.name}</span>
+                                <input type="text" name="subjectScores[${subject.name}]" value="${subject.score || ''}"
+                            </li>
+                        
+                        `
+                    }
+                }).join('')
+            
             res.send(`
+                <p> Nombre: ${student.name}</p>
+                <p> Apellido: ${student.lastname} </p>
+                <p> DNI: ${student.dni} </p>
+                <ul> ${inputsHtml}</ul>
+                
+                `)
+
+            // Renderiza la respuesta correctamente
+            /*res.send(`
                 <p> Nombre: ${student.name}</p>
                 <p> Apellido: ${student.lastname} </p>
                 <p> DNI: ${student.dni} </p>
@@ -71,7 +109,7 @@ exports.findStudentByDni = async function (req, res) {
                             </li>
                         `).join('')}
                 </ul>
-            `);
+            `);*/
         
     } catch(err) {
         res.status(500).json({success: false, message: 'Error al obtener el alumno'})
