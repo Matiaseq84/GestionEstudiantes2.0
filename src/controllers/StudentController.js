@@ -11,11 +11,14 @@ exports.addStudent = async function(req,res) {
         const exists = await Student.findOne({ dni })
         if(exists) return res.status(409).render('panel-administrador', {warning: 'Alumno existente'})
         
+            const [day, month, year] = bornDate.split('-');
+            const formattedDate = new Date(year, month - 1, day);    
+
         const newStudent = new Student({
             name,
             lastname,
             dni,
-            bornDate: new Date(bornDate), 
+            bornDate: formattedDate, 
             email,
             parents: {
                 parentName,
@@ -48,74 +51,27 @@ exports.findStudentByDni = async function (req, res) {
         
         if(!student) return res.send(`<p> Alumno no encontrado`)
         
-        const subjects = await SubjectController.getSubjects()
+            const subjects = await SubjectController.getSubjects(); // Asegúrate de que getSubjects devuelva un array de strings
 
-        /*const enrolledSubjects = student.subjects.map(subject => subject.subjectName)
-        const unenrolledSubjects = subjects.filter(subject => !enrolledSubjects.includes(subject))
-
-        const isAdminView = req.originalUrl.includes('/admin')       
-        const subjectsToShow = isAdminView ? unenrolledSubjects : enrolledSubjects
-
-        
-
-        res.send(`
-            <p> Nombre: ${student.name}</p>
-            <p> Apellido: ${student.lastname} </p>
-            <p> DNI: ${student.dni} </p>
-            <ul>
-                ${subjectsToShow
-                    .map(subjectName => 
-                        `
-                        <li>
-                            <span>${subjectName}
-                            <input type="checkbox" name= "selectedSubjects[]" value=${subjectName}>
-                        </li>`
-                    )
-                    .join('')}
-            `)*/
-
-            // Materias inscritas por el estudiante
-        const enrolledSubjects = student.subjects.map(subject => 
-            ({name: subject.subjectName, score: subject.score || null}))
-        const unenrolledSubjects = subjects.filter(subject => !enrolledSubjects.includes(subject))
-
-        // Determinar vista según la URL
-        const isAdminView = req.originalUrl.includes('/admin');
-        const isProfesorView = req.originalUrl.includes('/profesor')
-        const subjectsToShow = isAdminView
-            ? unenrolledSubjects
-            : enrolledSubjects;
-
-        // Generar HTML dinámico
-        const inputsHtml = subjectsToShow
-            .map( subject => {
-                if (isAdminView) {
-                    // Vista Admin: Checkbox para inscribir materias no inscritas
-                    return `
-                        <li>
-                            <span>${subject}</span>
-                            <input type="checkbox" name="selectedSubjects[]" >
-                        </li>`;
-                } else if (isProfesorView) {
-                    // Vista Profesor: Input de texto para registrar o actualizar notas
-                    const scoreInput = enrolledSubjects.find(en => en.name === subject.name)?.score || ''
-                    return `
-                        <li>
-                            <span>${subject.name}</span>
-                            <input type="text" name="subjectScores[${subject.name}]" value="${scoreInput}" placeholder="Ingrese la nota" >
-                        </li>`;
-                }
-            })
-            .join('');
-
-        // Renderizar respuesta
-        res.send(`
-            <p> Nombre: ${student.name}</p>
-            <p> Apellido: ${student.lastname}</p>
-            <p> DNI: ${student.dni}</p>
-            <ul>${inputsHtml}</ul>
-        `);
-
+            const enrolledSubjects = student.subjects.map(subject => subject.subjectName);
+            
+            const unenrolledSubjects = subjects.filter(subject => !enrolledSubjects.includes(subject));
+            
+            // Renderiza la respuesta correctamente
+            res.send(`
+                <p> Nombre: ${student.name}</p>
+                <p> Apellido: ${student.lastname} </p>
+                <p> DNI: ${student.dni} </p>
+                <ul>
+                    ${unenrolledSubjects
+                        .map(subjectName => `
+                            <li>
+                                <span>${subjectName}</span>
+                                <input type="checkbox" name="selectedSubjects[]" value="${subjectName}">
+                            </li>
+                        `).join('')}
+                </ul>
+            `);
         
     } catch(err) {
         res.status(500).json({success: false, message: 'Error al obtener el alumno'})
