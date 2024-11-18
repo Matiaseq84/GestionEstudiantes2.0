@@ -13,9 +13,10 @@ html
 
             div(id="resultadoBusqueda")
                  
-                   
-
-            button(type="submit") Inscribir materias
+            button(type="submit") Registrar Notas
+            br
+            if(success)
+                p(style= "color:green") 
 
 script.
     $(document).ready(function() {

@@ -3,27 +3,23 @@ html
     head   
         title PANEL ALUMNO
     body
-        h1 Bienvenido, #{alumno.nombre}!!
+        h1 Bienvenido/a, #{student.name}!!
 
         h2 Datos personales
 
-        p NOMBRE: #{alumno.apellido}, #{alumno.nombre}
-        p DNI: #{alumno.dni}
-        p FECHA DE NACIMIENTO: #{alumno.fechaNacimiento}
-        p EMAIL: #{alumno.email}
-        p NOMBRE DEL PADRE: #{alumno.padres.nombrePadre}
-        p DNI DEL PADRE: #{alumno.padres.dni}
+        p NOMBRE: #{student.lastname}, #{student.name}
+        p DNI: #{student.dni}
+        p FECHA DE NACIMIENTO: #{student.bornDate}
+        p EMAIL: #{student.email}
+        p NOMBRE DEL PADRE: #{student.parents.parentName}
+        p DNI DEL PADRE: #{student.parents.parentDni}
 
         h2 Materias inscriptas
 
-        if materias.length > 0
+        if student.subjects.length > 0
             ul 
-                each materia in materias
+                each subject in student.subjects
                     li(style="margin-bottom: 1.2rem") 
-                        span #{materia.nombreMateria}
-                        if materia.inscripto
-                            span(style="color: green") - Inscripto
-                        else 
-                            span(style="color: red") - No inscripto
+                        span #{subject.subjectName}
                         br
-                        span(style= "font-weight: bold") Nota: #{materia.nota === 0 ? 'SIN NOTA' : materia.nota}
+                        span(style= "font-weight: bold") Nota: #{subject.score === 0 ? 'SIN NOTA' : subject.score}

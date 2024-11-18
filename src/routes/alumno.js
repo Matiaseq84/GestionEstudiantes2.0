@@ -2,9 +2,9 @@ const express = require('express')
 const router = express.Router()
 const fs = require('fs').promises
 const path = require('path')
-const {busquedaAlumno} = require('../utils/funciones')
+const Students = require('../controllers/StudentController')
 
-router.get('/panel-alumno/:dni', async (req,res) => {
+router.get('/panel-alumno/:dni', Students.showInfoStudent) /*=> {
     const dni = req.params.dni
 
     try {
@@ -28,7 +28,7 @@ router.get('/panel-alumno/:dni', async (req,res) => {
         res.status(404).send('No encontrado')
     }
     
-})
+})*/
 
 
 
