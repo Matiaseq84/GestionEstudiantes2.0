@@ -4,7 +4,9 @@ html
         title Panel Profesor
         script(src="https://code.jquery.com/jquery-3.6.0.min.js")
     body 
-        h1 Bienvenido!
+        h1 Bienvenido/a!
+        br
+        a(href="/logout") Cerrar Sesión
 
         form(method="POST", action="/profesor/registrar-notas")
             label(for="dni") Buscar estudiante por DNI:

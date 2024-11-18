@@ -182,19 +182,21 @@ exports.registerStudentScores = async function (req, res) {
 
 exports.showInfoStudent = async function(req, res) {
     try {
+        
+        if(req.user.role !== 'student') res.status(403).send('Acceso denegado: no autorizado')
+
+        if(req.params.dni !== req.user.username) res.status(403).send('Acceso denegado: no coinicide con DNI')
+
         const dni = req.params.dni
-        
-        console.log(dni)
-        
+                
         const student = await Student.findOne({ dni });
         if (!student) return res.status(404).render('panel-profesor', {error: 'Alumno no encontrado'})
 
-        console.log(student)
-
-        res.status(201).render('panel-alumno', {student} )
+        res.render('panel-alumno', {student} )
         
     } catch (err) {
-
+        console.error('Error al mostrar información del estudiante:', err);
+        res.status(500).send('Error del servidor');
     }
     
 

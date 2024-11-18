@@ -1,16 +1,26 @@
 const User = require('../models/User')
 const {generarContrasenaAleatoria} = require('../utils/funciones')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const JWT_SECRET = 'tu_clave_secreta_super_segura'
+
+const SALT_ROUNDS = 10;
 
 exports.addUser = async function(dni) {
     try {
+
+        
+
         const exists = await User.findOne({dni})
         if(exists) return { success: false, message: 'Usuario existente'}
 
         const randomPassword = generarContrasenaAleatoria()
 
+        hashedPassword = await bcrypt.hash(randomPassword, SALT_ROUNDS)
+
         const newUser = new User({
             username: dni,
-            password: randomPassword,
+            password: hashedPassword,
             role: 'student'
         })
 
@@ -26,21 +36,29 @@ exports.addUser = async function(dni) {
 
 exports.initializeUser = async function() {
     try {
+
+        
+
         const adminExists = await User.findOne({ username: 'admin'})
+
+        hashedPasswordAdmin = await bcrypt.hash('admin', SALT_ROUNDS)
+        
         if(!adminExists) {
             await User.create({
                 username: 'admin',
-                password: 'admin',
+                password: hashedPasswordAdmin,
                 role: 'admin'
             })
         }
 
-        const profesorExists = await User.findOne({username: 'profesor'})
-        if(!profesorExists) {
+        hashedPasswordTeacher = await bcrypt.hash('profesor', SALT_ROUNDS)
+
+        const teacherExists = await User.findOne({username: 'profesor'})
+        if(!teacherExists) {
             await User.create({
                 username: 'profesor',
-                password: 'profesor',
-                role: 'profesor'
+                password: hashedPasswordTeacher,
+                role: 'teacher'
             })
         }
     } catch (err) {
@@ -56,14 +74,28 @@ exports.validateLogin = async function(req,res) {
 
         if(!user) res.status(401).render('login', {error: 'Usuario o contraseña incorrecta'})
 
-        if(user.username === username && user.password === password) {
+        const isPasswordValid = await bcrypt.compare(password, user.password)    
+        if(!isPasswordValid) return res.status(401).render('login', {error: 'Usuario o contraseña'})
+        
+        const token = jwt.sign(
+            {
+                id: user._id,
+                username: user.username,
+                role: user.role,
+                dni: user.dni
+            },
+            JWT_SECRET,
+            {expiresIn: '1h'}
+        )    
+
+            res.cookie('authToken', token, {httpOnly: true})
             if(user.role === 'admin') res.status(200).redirect('admin/panel-administrador')
-            if(user.role === 'profesor') res.status(200).redirect('profesor/panel-profesor')
+            if(user.role === 'teacher') res.status(200).redirect('profesor/panel-profesor')
             if(user.role === 'student') res.status(200).redirect(`alumno/panel-alumno/${user.username}`)
             
-        }
+        
     } catch (err) {
-        console.error('Error al loguearse', err)
+        console.error('Error al iniciar sesión', err)
         res.status(500).render('login', { error: 'Error en el servidor'})
     }
 

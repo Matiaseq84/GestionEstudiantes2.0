@@ -13,7 +13,7 @@ const StudentSchema = new mongoose.Schema({
     },
     subjects: [
         {
-            subjectName: {type: String, unique: true},
+            subjectName: {type: String},
             score: {type: Number, min: 0, max: 10}
         }
     ]
