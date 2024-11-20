@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const Students = require('../controllers/StudentController')
-const authenticateToken = require('../middlewares/authmiddleware')
+const authenticateToken = require('../middlewares/authMiddleware')
 
 router.get('/panel-profesor', authenticateToken, (req,res) => {
     if(req.user.role !== 'teacher') return res.status(403).send('Acceso denegado')
