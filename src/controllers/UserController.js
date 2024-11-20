@@ -2,14 +2,12 @@ const User = require('../models/User')
 const {generarContrasenaAleatoria} = require('../utils/funciones')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const JWT_SECRET = 'tu_clave_secreta_super_segura'
+require('dotenv').config()
 
 const SALT_ROUNDS = 10;
 
 exports.addUser = async function(dni) {
     try {
-
-        
 
         const exists = await User.findOne({dni})
         if(exists) return { success: false, message: 'Usuario existente'}
@@ -84,7 +82,7 @@ exports.validateLogin = async function(req,res) {
                 role: user.role,
                 dni: user.dni
             },
-            JWT_SECRET,
+            process.env.SECRET_KEY,
             {expiresIn: '1h'}
         )    
 
