@@ -1,6 +1,6 @@
 const User = require('../models/User')
 const {generarContrasenaAleatoria} = require('../utils/funciones')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const JWT_SECRET = 'tu_clave_secreta_super_segura'
 
