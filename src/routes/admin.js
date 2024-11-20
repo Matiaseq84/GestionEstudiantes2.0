@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const Students = require('../controllers/StudentController')
-const authenticateToken = require('../middlewares/authmiddleware')
+const authenticateToken = require('../middlewares/authMiddleware')
 
 router.get('/panel-administrador', authenticateToken, (req, res) => {
     console.log(req.user.role)
