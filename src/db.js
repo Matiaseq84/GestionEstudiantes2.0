@@ -8,7 +8,8 @@ const connectDB = async () => {
          
         })*/
       await mongoose.connect(dbURI, {
-         
+        serverSelectionTimeoutMS: 10000, // Tiempo máximo de espera para encontrar un servidor (en milisegundos)
+        socketTimeoutMS: 45000,  
       })
 
         console.log('Conectado a MongoDB Atlas')
